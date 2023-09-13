@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import blog.backend.blog.MariaDB.operations;
 
+
 @Controller
 @ResponseBody
 // 注意临时允许跨域
 @CrossOrigin
 public class loginController {
+
     @RequestMapping("/login")
     Boolean login(@RequestParam String name, @RequestParam String pass){
         if(operations.Check2("user", "name", name, "password", pass)!=0){
