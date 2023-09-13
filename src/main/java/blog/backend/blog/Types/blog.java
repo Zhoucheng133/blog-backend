@@ -10,16 +10,19 @@ public class blog {
     String name;
     Date createDate;
     String path;
+    Boolean top;
     /**
      * @param id
      * @param name
      * @param createDate
      * @param path
+     * @param top
      */
-    public blog(int id, String name, Date createDate, String path) {
+    public blog(int id, String name, Date createDate, String path, Boolean top) {
         this.id = id;
         this.name = name;
         this.createDate = createDate;
         this.path = path;
+        this.top = top;
     }
 }
