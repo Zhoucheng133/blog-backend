@@ -5,11 +5,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import blog.backend.blog.MariaDB.operations;
+
 @Controller
 @ResponseBody
 public class loginController {
     @RequestMapping("/login")
-    String login(@RequestParam String name, @RequestParam String pass){
-        return name+":"+pass;
+    Boolean login(@RequestParam String name, @RequestParam String pass){
+        if(operations.Check2("user", "name", name, "password", pass)!=0){
+            return true;
+        }else{
+            return false;
+        }
     }
 }
