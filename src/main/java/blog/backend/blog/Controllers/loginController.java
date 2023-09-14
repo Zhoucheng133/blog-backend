@@ -14,11 +14,11 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 @Data
-class loginFeedback{
+class loginResponse{
     Boolean ok;
     String token;
 
-    public loginFeedback(Boolean ok, String token) {
+    public loginResponse(Boolean ok, String token) {
         this.ok = ok;
         this.token = token;
     }
@@ -29,10 +29,10 @@ class loginFeedback{
 @CrossOrigin
 public class loginController {
 
-    private final String key="blogUserKey";
+    static final String key="blogUserKey";
 
     @RequestMapping("/login")
-    loginFeedback login(@RequestParam String name, @RequestParam String pass){
+    loginResponse login(@RequestParam String name, @RequestParam String pass){
         if(operations.Check2("user", "name", name, "password", pass)!=0){
 
             String token = JWT.create()
@@ -40,9 +40,9 @@ public class loginController {
                 .withClaim("name", name)
                 .sign(Algorithm.HMAC256(key));
 
-            return new loginFeedback(true, token);
+            return new loginResponse(true, token);
         }else{
-            return new loginFeedback(false, "");
+            return new loginResponse(false, "");
         }
     }
 
@@ -52,7 +52,7 @@ public class loginController {
     }
 
     // 在执行操作之前，先检查token!
-    public Boolean checkToken(String token, String name){
+    static public Boolean checkToken(String token, String name){
         try {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(key))
                     .withIssuer("userData")
