@@ -50,6 +50,7 @@ public class blogController {
             Files.createDirectories(path.getParent());
             // 存储文件
             Files.write(path, bytes);
+            operations.Insert(title, 0, "");
             return new uploadResponse(true, "");
         }
         return new uploadResponse(false, "存储出错");

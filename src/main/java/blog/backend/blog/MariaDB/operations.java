@@ -49,4 +49,44 @@ public class operations {
         }
         return titles;
     }
+
+    public static Boolean Insert(String title, int top, String tag) {
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            Class.forName(DRIVER);
+            conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            stmt = conn.createStatement();
+            String sql;
+            if(!tag.isEmpty()){
+                sql = "INSERT INTO blog (title, createDate, path, top, tag) VALUES ('"+title+"',CONVERT_TZ(CURRENT_TIMESTAMP(), 'UTC', '+8:00'), '/"+title+".md', "+top+", "+tag+");";
+            }else{
+                sql = "INSERT INTO blog (title, createDate, path, top) VALUES ('"+title+"',CONVERT_TZ(CURRENT_TIMESTAMP(), 'UTC', '+8:00'), '/"+title+".md', "+top+");";
+            }
+
+            System.out.println(sql);
+            stmt.executeUpdate(sql);
+            // System.out.println("写入成功!");
+            return true;
+        } catch (SQLException se) {
+//            se.printStackTrace();
+            return false;
+        } catch (Exception e) {
+//            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException se2) {
+//                se2.printStackTrace();
+            }
+            try {
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException se) {
+//                se.printStackTrace();
+            }
+        }
+    }
 }
