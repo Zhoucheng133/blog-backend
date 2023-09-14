@@ -2,10 +2,7 @@ package blog.backend.blog.Controllers;
 
 import lombok.Data;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import blog.backend.blog.MariaDB.operations;
 
@@ -15,17 +12,6 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-
-@Data
-class checkTokenFeedback{
-    Boolean ok;
-    String username;
-
-    public checkTokenFeedback(Boolean ok, String username) {
-        this.ok = ok;
-        this.username = username;
-    }
-}
 
 @Data
 class loginFeedback{
@@ -60,17 +46,22 @@ public class loginController {
         }
     }
 
-    @RequestMapping("/checkToken")
-    checkTokenFeedback checkToken(@RequestParam String token){
+    @RequestMapping("/checkLogin")
+    Boolean checkLogin(@RequestHeader("token") String token, @RequestHeader("name") String name){
+        return checkToken(token, name);
+    }
+
+    // 在执行操作之前，先检查token!
+    public Boolean checkToken(String token, String name){
         try {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(key))
                     .withIssuer("userData")
                     .build();
             DecodedJWT decodedJWT = verifier.verify(token);
             String username= String.valueOf(decodedJWT.getClaim("name"));
-            return new checkTokenFeedback(true, username.substring(1, username.length()-1));
+            return username.equals(name);
         } catch (JWTVerificationException exception){
-            return new checkTokenFeedback(false, "");
+            return false;
         }
     }
 
