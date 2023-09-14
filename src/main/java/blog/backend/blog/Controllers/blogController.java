@@ -28,9 +28,9 @@ class uploadResponse{
 @CrossOrigin
 public class blogController {
     @RequestMapping("/upload")
-    uploadResponse upload(@RequestParam("file") MultipartFile file, @RequestParam("token") String token, @RequestParam("name") String name, @RequestParam("title") String title) throws IOException {
+    uploadResponse upload(@RequestParam("file") MultipartFile file, @RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("title") String title) throws IOException {
         // 登录失败
-        if(loginController.checkToken(token, name)){
+        if(!loginController.checkToken(token, name)){
             return new uploadResponse(false, "TokenErr");
         }
         // 重复命名
@@ -45,7 +45,7 @@ public class blogController {
             // 在项目中创建的文件夹
             String uploadDir = "blogs";
             // 创建路径
-            Path path = Path.of(uploadDir + File.separator + title);
+            Path path = Path.of(uploadDir + File.separator + title + ".md");
             // 创建目录
             Files.createDirectories(path.getParent());
             // 存储文件
