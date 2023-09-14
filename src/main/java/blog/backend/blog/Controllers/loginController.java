@@ -59,7 +59,7 @@ public class loginController {
                     .build();
             DecodedJWT decodedJWT = verifier.verify(token);
             String username= String.valueOf(decodedJWT.getClaim("name"));
-            return username.equals(name);
+            return username.substring(1, username.length()-1).equals(name);
         } catch (JWTVerificationException exception){
             return false;
         }
