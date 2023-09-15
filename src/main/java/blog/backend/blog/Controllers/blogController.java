@@ -2,15 +2,22 @@ package blog.backend.blog.Controllers;
 
 import blog.backend.blog.MariaDB.operations;
 import lombok.Data;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 @Data
 class uploadResponse{
@@ -54,5 +61,27 @@ public class blogController {
             return new uploadResponse(true, "");
         }
         return new uploadResponse(false, "存储出错");
+    }
+
+    @RequestMapping("/blog/content/{id}")
+    public ResponseEntity<String> getTxtFile(@PathVariable int id) throws IOException {
+        // TODO 需要将id转换成文件名
+        File file = new File("blogs/"+id+".md");
+        if (!file.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+        StringBuilder contentBuilder = new StringBuilder();
+        try (Scanner scanner = new Scanner(file, StandardCharsets.UTF_8.name())) {
+            while (scanner.hasNextLine()) {
+                contentBuilder.append(scanner.nextLine()).append("\n");
+            }
+        }
+        String fileContent = contentBuilder.toString();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        headers.setContentDispositionFormData("attachment", id+".md");
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(fileContent);
     }
 }
