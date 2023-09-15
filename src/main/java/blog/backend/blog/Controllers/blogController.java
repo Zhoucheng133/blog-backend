@@ -64,11 +64,13 @@ public class blogController {
     }
 
     @RequestMapping("/blog/content/{id}")
-    public ResponseEntity<String> getTxtFile(@PathVariable int id) throws IOException {
+    public String getTxtFile(@PathVariable int id) throws IOException {
         // TODO 需要将id转换成文件名
-        File file = new File("blogs/"+id+".md");
+        String name=operations.getTitle(id);
+
+        File file = new File("blogs/"+name+".md");
         if (!file.exists()) {
-            return ResponseEntity.notFound().build();
+            return "";
         }
         StringBuilder contentBuilder = new StringBuilder();
         try (Scanner scanner = new Scanner(file, StandardCharsets.UTF_8)) {
@@ -76,13 +78,7 @@ public class blogController {
                 contentBuilder.append(scanner.nextLine()).append("\n");
             }
         }
-        String fileContent = contentBuilder.toString();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
-        headers.setContentDispositionFormData("attachment", id+".md");
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(fileContent);
+        return contentBuilder.toString();
     }
 
     @RequestMapping("/blog/getAll")

@@ -102,4 +102,26 @@ public class operations {
         }
         return list;
     }
+
+    public static String getTitle(int id){
+        String title="";
+        try {
+            Class.forName(DRIVER);
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT title FROM blog WHERE id = " + id);
+            if (resultSet.next()) {
+                title = resultSet.getString(1);
+                if (title == null || title.equals("null")) {
+                    return "";
+                }
+            }
+            resultSet.close();
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            System.err.println("错误: " + e.getMessage());
+        }
+        return title;
+    }
 }
