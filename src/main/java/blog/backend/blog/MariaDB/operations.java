@@ -2,6 +2,7 @@ package blog.backend.blog.MariaDB;
 
 import java.sql.*;
 import java.util.ArrayList;
+import blog.backend.blog.Controllers.blog;
 
 public class operations {
     private static final String DRIVER = "org.mariadb.jdbc.Driver";
@@ -63,30 +64,42 @@ public class operations {
             }else{
                 sql = "INSERT INTO blog (title, createDate, path, top) VALUES ('"+title+"',CONVERT_TZ(CURRENT_TIMESTAMP(), 'UTC', '+8:00'), '"+title+".md', "+top+");";
             }
-
-            System.out.println(sql);
             stmt.executeUpdate(sql);
-            // System.out.println("写入成功!");
             return true;
-        } catch (SQLException se) {
-//            se.printStackTrace();
-            return false;
         } catch (Exception e) {
-//            e.printStackTrace();
             return false;
         } finally {
             try {
                 if (stmt != null)
                     stmt.close();
             } catch (SQLException se2) {
-//                se2.printStackTrace();
             }
             try {
                 if (conn != null)
                     conn.close();
             } catch (SQLException se) {
-//                se.printStackTrace();
             }
         }
+    }
+
+    public static ArrayList<blog> getAllBlogs(){
+        ArrayList<blog> list=new ArrayList<>();
+        try {
+            Class.forName(DRIVER);
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM blog" );
+            while (resultSet.next()) {
+                blog data=new blog(resultSet.getInt(1), resultSet.getString(2), resultSet.getTimestamp(3), resultSet.getString(4), resultSet.getBoolean(5), resultSet.getString(6));
+                list.add(data);
+            }
+            resultSet.close();
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            System.err.println("错误: " + e.getMessage());
+            return list;
+        }
+        return list;
     }
 }

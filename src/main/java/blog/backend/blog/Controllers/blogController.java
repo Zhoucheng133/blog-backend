@@ -28,6 +28,7 @@ class uploadResponse{
     }
 }
 
+
 @Controller
 @ResponseBody
 @CrossOrigin
@@ -82,5 +83,10 @@ public class blogController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(fileContent);
+    }
+
+    @RequestMapping("/blog/getAll")
+    ArrayList<blog> getAll(){
+        return operations.getAllBlogs();
     }
 }
