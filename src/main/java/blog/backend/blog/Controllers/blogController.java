@@ -65,7 +65,6 @@ public class blogController {
 
     @RequestMapping("/blog/content/{id}")
     public String getTxtFile(@PathVariable int id) throws IOException {
-        // TODO 需要将id转换成文件名
         String name=operations.getTitle(id);
 
         File file = new File("blogs/"+name+".md");

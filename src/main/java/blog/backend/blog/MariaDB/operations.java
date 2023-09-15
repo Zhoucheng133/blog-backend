@@ -88,7 +88,7 @@ public class operations {
             Class.forName(DRIVER);
             Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM blog" );
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM blog ORDER BY createDate DESC;" );
             while (resultSet.next()) {
                 blog data=new blog(resultSet.getInt(1), resultSet.getString(2), resultSet.getTimestamp(3), resultSet.getString(4), resultSet.getBoolean(5), resultSet.getString(6));
                 list.add(data);
