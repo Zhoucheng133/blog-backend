@@ -2,11 +2,9 @@ package blog.backend.blog.Controllers;
 
 import blog.backend.blog.MariaDB.operations;
 import lombok.Data;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,7 +33,8 @@ class uploadResponse{
 @CrossOrigin
 public class blogController {
     @RequestMapping("/upload")
-    uploadResponse upload(@RequestParam("file") MultipartFile file, @RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("title") String title) throws IOException {
+    uploadResponse upload(@RequestParam("file") MultipartFile file, @RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("title") String title, @RequestParam("tag") String tag, @RequestParam("top") Boolean top) throws IOException {
+        System.out.println(tag+":"+top);
         // 登录失败
         if(!loginController.checkToken(token, name)){
             return new uploadResponse(false, "TokenErr");
@@ -57,7 +56,7 @@ public class blogController {
             Files.createDirectories(path.getParent());
             // 存储文件
             Files.write(path, bytes);
-            operations.Insert(title, 0, "");
+            operations.Insert(title, top ?1:0, tag);
             return new uploadResponse(true, "");
         }
         return new uploadResponse(false, "存储出错");
@@ -71,7 +70,7 @@ public class blogController {
             return ResponseEntity.notFound().build();
         }
         StringBuilder contentBuilder = new StringBuilder();
-        try (Scanner scanner = new Scanner(file, StandardCharsets.UTF_8.name())) {
+        try (Scanner scanner = new Scanner(file, StandardCharsets.UTF_8)) {
             while (scanner.hasNextLine()) {
                 contentBuilder.append(scanner.nextLine()).append("\n");
             }
