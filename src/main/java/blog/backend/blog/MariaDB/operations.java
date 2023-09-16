@@ -3,6 +3,7 @@ package blog.backend.blog.MariaDB;
 import java.sql.*;
 import java.util.ArrayList;
 import blog.backend.blog.Controllers.blog;
+import blog.backend.blog.Controllers.blogContent;
 
 public class operations {
     private static final String DRIVER = "org.mariadb.jdbc.Driver";
@@ -103,25 +104,30 @@ public class operations {
         return list;
     }
 
-    public static String getTitle(int id){
+    public static blogContent getTitle(int id){
         String title="";
+        String tag=null;
+        Timestamp date=null;
         try {
             Class.forName(DRIVER);
             Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT title FROM blog WHERE id = " + id);
+            ResultSet resultSet = statement.executeQuery("SELECT title, createDate, tag FROM blog WHERE id = " + id);
             if (resultSet.next()) {
                 title = resultSet.getString(1);
+                date=resultSet.getTimestamp(2);
+                tag = resultSet.getString(3);
                 if (title == null || title.equals("null")) {
-                    return "";
+                    return new blogContent("", null, null);
                 }
             }
             resultSet.close();
             statement.close();
             connection.close();
+            return new blogContent(title, tag, date);
         } catch (Exception e) {
             System.err.println("错误: " + e.getMessage());
         }
-        return title;
+        return new blogContent("", null, null);
     }
 }

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -28,6 +29,20 @@ class uploadResponse{
     }
 }
 
+@Data
+class contentResponse{
+    String title;
+    String tag;
+    Timestamp date;
+    String content;
+
+    public contentResponse(String title, String tag, Timestamp date, String content) {
+        this.title = title;
+        this.tag = tag;
+        this.date = date;
+        this.content = content;
+    }
+}
 
 @Controller
 @ResponseBody
@@ -64,12 +79,12 @@ public class blogController {
     }
 
     @RequestMapping("/blog/content/{id}")
-    public String getTxtFile(@PathVariable int id) throws IOException {
-        String name=operations.getTitle(id);
+    contentResponse getTxtFile(@PathVariable int id) throws IOException {
+        blogContent info=operations.getTitle(id);
 
-        File file = new File("blogs/"+name+".md");
+        File file = new File("blogs/"+info.title+".md");
         if (!file.exists()) {
-            return "";
+            return new contentResponse("", "", null, "");
         }
         StringBuilder contentBuilder = new StringBuilder();
         try (Scanner scanner = new Scanner(file, StandardCharsets.UTF_8)) {
@@ -77,7 +92,7 @@ public class blogController {
                 contentBuilder.append(scanner.nextLine()).append("\n");
             }
         }
-        return contentBuilder.toString();
+        return new contentResponse(info.title, info.tag, info.date, contentBuilder.toString());
     }
 
     @RequestMapping("/blog/getAll")
