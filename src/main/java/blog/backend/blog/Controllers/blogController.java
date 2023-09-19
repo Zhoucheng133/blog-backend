@@ -55,19 +55,20 @@ public class blogController {
         if(!loginController.checkToken(token, name)){
             return new uploadResponse(false, "TokenErr");
         }
-        // 重复命名
-        ArrayList<String> allTitles= operations.getAllTitle();
-        if(allTitles.contains(title)){
-            return new uploadResponse(false, "duplicateName");
-        }
 
         // 判断文件是否为空
         if(!file.isEmpty()){
+
             byte[] bytes = file.getBytes();
             // 在项目中创建的文件夹
             String uploadDir = "blogs";
             // 创建路径
             Path path = Path.of(uploadDir + File.separator + title + ".md");
+
+            if (Files.exists(path)) {
+                return new uploadResponse(false, "duplicateName");
+            }
+
             // 创建目录
             Files.createDirectories(path.getParent());
             // 存储文件
