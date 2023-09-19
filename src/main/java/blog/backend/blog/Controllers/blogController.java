@@ -66,7 +66,7 @@ public class blogController {
             Path path = Path.of(uploadDir + File.separator + title + ".md");
 
             if (Files.exists(path)) {
-                return new uploadResponse(false, "duplicateName");
+                return new uploadResponse(false, "重复命名");
             }
 
             // 创建目录
