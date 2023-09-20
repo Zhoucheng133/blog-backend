@@ -44,10 +44,58 @@ class contentResponse{
     }
 }
 
+@Data
+class fileResponse{
+    Boolean ok;
+    ArrayList<file> files;
+
+    public fileResponse(Boolean ok, ArrayList<file> files) {
+        this.ok = ok;
+        this.files = files;
+    }
+}
+
+@Data
+class file{
+    Boolean isFile;
+    String name;
+
+    public file(Boolean isFile, String name) {
+        this.isFile = isFile;
+        this.name = name;
+    }
+}
+
 @Controller
 @ResponseBody
 @CrossOrigin
 public class blogController {
+    @RequestMapping("/fileManage")
+    fileResponse fileManage(@RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("path") String path){
+        if(!loginController.checkToken(token, name)){
+            return new fileResponse(false, null);
+        }
+
+        path="blogs/"+path;
+
+        File directory = new File(path);
+        if (!directory.exists() || !directory.isDirectory()) {
+            return new fileResponse(false, null);
+        }
+
+        File[] files = directory.listFiles();
+        ArrayList<file> fileInfos = new ArrayList<>();
+
+        if (files != null) {
+            for (File file : files) {
+                boolean isFile = file.isFile();
+                String filename = file.getName();
+                fileInfos.add(new file(isFile, filename));
+            }
+        }
+
+        return new fileResponse(true, fileInfos);
+    }
     @RequestMapping("/upload")
     uploadResponse upload(@RequestParam("file") MultipartFile file, @RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("title") String title, @RequestParam("tag") String tag, @RequestParam("top") Boolean top) throws IOException {
         System.out.println(tag+":"+top);
