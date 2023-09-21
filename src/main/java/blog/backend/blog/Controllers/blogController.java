@@ -87,7 +87,7 @@ public class blogController {
             return new fileResponse(false, null);
         }
 
-        path="blogs/"+path;
+        path="blogs"+path;
 
         File directory = new File(path);
         if (!directory.exists() || !directory.isDirectory()) {
