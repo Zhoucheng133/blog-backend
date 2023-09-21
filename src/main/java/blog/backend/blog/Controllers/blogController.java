@@ -111,7 +111,6 @@ public class blogController {
     }
     @RequestMapping("/upload")
     uploadResponse upload(@RequestParam("file") MultipartFile file, @RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("title") String title, @RequestParam("path") String savePath, @RequestParam("tag") String tag, @RequestParam("top") Boolean top) throws IOException {
-        System.out.println(tag+":"+top);
         // 登录失败
         if(!loginController.checkToken(token, name)){
             return new uploadResponse(false, "TokenErr");
