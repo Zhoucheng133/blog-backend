@@ -2,9 +2,6 @@ package blog.backend.blog.Controllers;
 
 import blog.backend.blog.MariaDB.operations;
 import lombok.Data;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -117,7 +114,7 @@ public class blogController {
         }
 
         ArrayList<String> titles=getAllTitles();
-        if(titles.contains(title)){
+        if (titles != null && titles.contains(title)) {
             return new uploadResponse(false, "重复命名");
         }
 
