@@ -18,6 +18,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import static blog.backend.blog.MariaDB.operations.getAllTitles;
+
 @Data
 class uploadResponse{
     Boolean ok;
@@ -108,11 +110,16 @@ public class blogController {
         return new fileResponse(true, fileInfos);
     }
     @RequestMapping("/upload")
-    uploadResponse upload(@RequestParam("file") MultipartFile file, @RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("title") String title, @RequestParam("tag") String tag, @RequestParam("top") Boolean top) throws IOException {
+    uploadResponse upload(@RequestParam("file") MultipartFile file, @RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("title") String title, @RequestParam("path") String savePath, @RequestParam("tag") String tag, @RequestParam("top") Boolean top) throws IOException {
         System.out.println(tag+":"+top);
         // 登录失败
         if(!loginController.checkToken(token, name)){
             return new uploadResponse(false, "TokenErr");
+        }
+
+        ArrayList<String> titles=getAllTitles();
+        if(titles.contains(title)){
+            return new uploadResponse(false, "重复命名");
         }
 
         // 判断文件是否为空
@@ -120,13 +127,9 @@ public class blogController {
 
             byte[] bytes = file.getBytes();
             // 在项目中创建的文件夹
-            String uploadDir = "blogs";
+//            String uploadDir = savePath;
             // 创建路径
-            Path path = Path.of(uploadDir + File.separator + title + ".md");
-
-            if (Files.exists(path)) {
-                return new uploadResponse(false, "重复命名");
-            }
+            Path path = Path.of("blogs/"+savePath + File.separator + title + ".md");
 
             // 创建目录
             Files.createDirectories(path.getParent());

@@ -83,6 +83,29 @@ public class operations {
         return list;
     }
 
+    public static ArrayList<String> getAllTitles(){
+        ArrayList<String> titles = new ArrayList<>();
+        try {
+            Class.forName(DRIVER);
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            Statement statement = connection.createStatement();
+            String sql = "SELECT title FROM blog";
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                String title = resultSet.getString("title");
+                titles.add(title);
+            }
+            resultSet.close();
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            return null;
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+        return titles;
+    }
+
     public static blogContent getTitle(int id){
         String title="";
         String tag=null;
