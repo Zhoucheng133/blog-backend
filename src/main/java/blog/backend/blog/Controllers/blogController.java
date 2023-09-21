@@ -66,6 +66,17 @@ class file{
     }
 }
 
+@Data
+class searchPath{
+    Boolean ok;
+    String path;
+
+    public searchPath(Boolean ok, String path) {
+        this.ok = ok;
+        this.path = path;
+    }
+}
+
 @Controller
 @ResponseBody
 @CrossOrigin
@@ -127,11 +138,35 @@ public class blogController {
         return new uploadResponse(false, "存储出错");
     }
 
+    searchPath pathResponse(File directory, String fileName) {
+        if (directory.isDirectory()) {
+            File[] files = directory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        searchPath subResult = pathResponse(file, fileName);
+                        if (subResult.ok) {
+                            return subResult; // 在子目录中找到文件，返回结果
+                        }
+                    } else if (file.getName().equals(fileName)) {
+                        return new searchPath(true, file.getPath()); // 找到文件后返回结果
+                    }
+                }
+            }
+        }
+        return new searchPath(false, ""); // 文件未找到
+    }
+
     @RequestMapping("/blog/content/{id}")
     contentResponse getTxtFile(@PathVariable int id) throws IOException {
         blogContent info=operations.getTitle(id);
 
-        File file = new File("blogs/"+info.title+".md");
+        String fileName=info.title+".md";
+        String path="blogs/";
+
+        searchPath tmp = pathResponse(new File(path), fileName);
+
+        File file = new File(tmp.path);
         if (!file.exists()) {
             return new contentResponse("", "", null, "");
         }
