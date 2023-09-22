@@ -18,11 +18,11 @@ import java.util.Scanner;
 import static blog.backend.blog.MariaDB.operations.getAllTitles;
 
 @Data
-class uploadResponse{
+class normalResponse{
     Boolean ok;
     String reason;
 
-    public uploadResponse(Boolean ok, String reason) {
+    public normalResponse(Boolean ok, String reason) {
         this.ok = ok;
         this.reason = reason;
     }
@@ -80,6 +80,24 @@ class searchPath{
 @ResponseBody
 @CrossOrigin
 public class blogController {
+    @RequestMapping("/newFolder")
+    normalResponse newFolder(@RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("folderName") String folderName, @RequestParam("path") String path){
+        if(!loginController.checkToken(token, name)){
+            return new normalResponse(false, "TokenErr");
+        }
+
+        path="blogs"+path+"/"+folderName;
+        File folder = new File(path);
+        boolean success = folder.mkdir();
+
+        if(success){
+            return new normalResponse(true, "");
+        }else{
+            return new normalResponse(false, "创建文件夹失败");
+        }
+
+
+    }
     @RequestMapping("/fileManage")
     fileResponse fileManage(@RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("path") String path){
         if(!loginController.checkToken(token, name)){
@@ -107,15 +125,15 @@ public class blogController {
         return new fileResponse(true, fileInfos);
     }
     @RequestMapping("/upload")
-    uploadResponse upload(@RequestParam("file") MultipartFile file, @RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("title") String title, @RequestParam("path") String savePath, @RequestParam("tag") String tag, @RequestParam("top") Boolean top) throws IOException {
+    normalResponse upload(@RequestParam("file") MultipartFile file, @RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("title") String title, @RequestParam("path") String savePath, @RequestParam("tag") String tag, @RequestParam("top") Boolean top) throws IOException {
         // 登录失败
         if(!loginController.checkToken(token, name)){
-            return new uploadResponse(false, "TokenErr");
+            return new normalResponse(false, "TokenErr");
         }
 
         ArrayList<String> titles=getAllTitles();
         if (titles != null && titles.contains(title)) {
-            return new uploadResponse(false, "重复命名");
+            return new normalResponse(false, "重复命名");
         }
 
         // 判断文件是否为空
@@ -132,9 +150,9 @@ public class blogController {
             // 存储文件
             Files.write(path, bytes);
             operations.Insert(title, top ?1:0, tag);
-            return new uploadResponse(true, "");
+            return new normalResponse(true, "");
         }
-        return new uploadResponse(false, "存储出错");
+        return new normalResponse(false, "存储出错");
     }
 
     searchPath pathResponse(File directory, String fileName) {
