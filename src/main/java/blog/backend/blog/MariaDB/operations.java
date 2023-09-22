@@ -106,6 +106,31 @@ public class operations {
         return titles;
     }
 
+    public static Boolean delBlog(String name){
+        Connection connection = null;
+        try {
+            Class.forName(DRIVER);
+            connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            String query = "DELETE FROM blog WHERE title = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, name);
+            int rowsAffected = preparedStatement.executeUpdate();
+            if(rowsAffected > 0){
+                String alterSQL = "ALTER TABLE blog AUTO_INCREMENT=1";
+                Statement alterStatement = connection.createStatement();
+                alterStatement.execute(alterSQL);
+                alterStatement.close();
+                connection.close();
+                return true;
+            }
+        } catch (SQLException e) {
+            return false;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+        return false;
+    }
+
     public static blogContent getTitle(int id){
         String title="";
         String tag=null;

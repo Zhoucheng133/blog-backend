@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import static blog.backend.blog.MariaDB.operations.delBlog;
 import static blog.backend.blog.MariaDB.operations.getAllTitles;
 
 @Data
@@ -80,10 +81,32 @@ class searchPath{
 @ResponseBody
 @CrossOrigin
 public class blogController {
+    @RequestMapping("/delFile")
+    normalResponse delFile(@RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("fileName") String fileName, @RequestParam("path") String path){
+        if(!loginController.checkToken(token, name)){
+            return new normalResponse(false, "登录失败或者Token过期");
+        }
+        if(!delBlog(fileName)){
+            return new normalResponse(false, "移除数据库数据失败");
+        }
+        String filePath="blogs"+path+"/"+fileName+".md";
+        File fileToDelete = new File(filePath);
+        if (fileToDelete.exists()) {
+            boolean deleted = fileToDelete.delete();
+
+            if (deleted) {
+                return new normalResponse(true, "");
+            } else {
+                return new normalResponse(false, "权限问题，删除失败");
+            }
+        } else {
+            return new normalResponse(false, "需要删除的文件不存在");
+        }
+    }
     @RequestMapping("/newFolder")
     normalResponse newFolder(@RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("folderName") String folderName, @RequestParam("path") String path){
         if(!loginController.checkToken(token, name)){
-            return new normalResponse(false, "TokenErr");
+            return new normalResponse(false, "登录失败或者Token过期");
         }
 
         path="blogs"+path+"/"+folderName;
@@ -95,8 +118,6 @@ public class blogController {
         }else{
             return new normalResponse(false, "创建文件夹失败");
         }
-
-
     }
     @RequestMapping("/fileManage")
     fileResponse fileManage(@RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("path") String path){
@@ -128,7 +149,7 @@ public class blogController {
     normalResponse upload(@RequestParam("file") MultipartFile file, @RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("title") String title, @RequestParam("path") String savePath, @RequestParam("tag") String tag, @RequestParam("top") Boolean top) throws IOException {
         // 登录失败
         if(!loginController.checkToken(token, name)){
-            return new normalResponse(false, "TokenErr");
+            return new normalResponse(false, "登录失败或者Token过期");
         }
 
         ArrayList<String> titles=getAllTitles();
