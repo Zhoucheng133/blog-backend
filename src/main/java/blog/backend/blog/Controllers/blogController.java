@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -201,6 +202,7 @@ public class blogController {
             return new normalResponse(false, "登录失败或者Token过期");
         }
         filePath="blogs"+filePath;
+        content = URLDecoder.decode(content, StandardCharsets.UTF_8);
         try {
             Path path = Path.of(filePath + File.separator + fileName);
             Files.write(path, content.getBytes());
