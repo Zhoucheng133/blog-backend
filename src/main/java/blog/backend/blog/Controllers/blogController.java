@@ -195,6 +195,22 @@ public class blogController {
         return new searchPath(false, ""); // 文件未找到
     }
 
+    @RequestMapping("/saveEdit")
+    normalResponse saveEdit(@RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("fileName") String fileName, @RequestParam("path") String filePath, @RequestParam("content") String content){
+        if(!loginController.checkToken(token, name)){
+            return new normalResponse(false, "登录失败或者Token过期");
+        }
+        filePath="blogs"+filePath;
+        try {
+            Path path = Path.of(filePath + File.separator + fileName);
+            Files.write(path, content.getBytes());
+            return new normalResponse(true, "");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new normalResponse(false, "无法更新Markdown文件");
+        }
+    }
+
     @RequestMapping("/getContentByName")
     contentResponse getContentByName(@RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("fileName") String fileName) throws IOException {
         if(!loginController.checkToken(token, name)){
