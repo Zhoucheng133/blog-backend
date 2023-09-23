@@ -195,9 +195,33 @@ public class blogController {
         return new searchPath(false, ""); // 文件未找到
     }
 
+    @RequestMapping("/getContentByName")
+    contentResponse getContentByName(@RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("fileName") String fileName) throws IOException {
+        if(!loginController.checkToken(token, name)){
+            return new contentResponse("", "", null, "");
+        }
+        blogContent info=operations.getBlogByName(fileName);
+        fileName=fileName+".md";
+        String path="blogs/";
+
+        searchPath tmp = pathResponse(new File(path), fileName);
+
+        File file = new File(tmp.path);
+        if (!file.exists()) {
+            return new contentResponse("", "", null, "");
+        }
+        StringBuilder contentBuilder = new StringBuilder();
+        try (Scanner scanner = new Scanner(file, StandardCharsets.UTF_8)) {
+            while (scanner.hasNextLine()) {
+                contentBuilder.append(scanner.nextLine()).append("\n");
+            }
+        }
+        return new contentResponse(info.title, info.tag, info.date, contentBuilder.toString());
+    }
+
     @RequestMapping("/blog/content/{id}")
     contentResponse getTxtFile(@PathVariable int id) throws IOException {
-        blogContent info=operations.getTitle(id);
+        blogContent info=operations.getBlogById(id);
 
         String fileName=info.title+".md";
         String path="blogs/";

@@ -83,6 +83,7 @@ public class operations {
         return list;
     }
 
+
     public static ArrayList<String> getAllTitles(){
         ArrayList<String> titles = new ArrayList<>();
         try {
@@ -131,7 +132,34 @@ public class operations {
         return false;
     }
 
-    public static blogContent getTitle(int id){
+    public static blogContent getBlogByName(String name){
+        String title="";
+        String tag=null;
+        Timestamp date=null;
+        try {
+            Class.forName(DRIVER);
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT title, createDate, tag FROM blog WHERE title = '" + name + "'");
+            if (resultSet.next()) {
+                title = resultSet.getString(1);
+                date=resultSet.getTimestamp(2);
+                tag = resultSet.getString(3);
+                if (title == null || title.equals("null")) {
+                    return new blogContent("", null, null);
+                }
+            }
+            resultSet.close();
+            statement.close();
+            connection.close();
+            return new blogContent(title, tag, date);
+        } catch (Exception e) {
+            System.err.println("错误: " + e.getMessage());
+        }
+        return new blogContent("", null, null);
+    }
+
+    public static blogContent getBlogById(int id){
         String title="";
         String tag=null;
         Timestamp date=null;
