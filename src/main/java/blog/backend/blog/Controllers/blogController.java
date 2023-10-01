@@ -171,7 +171,8 @@ public class blogController {
             Files.createDirectories(path.getParent());
             // 存储文件
             Files.write(path, bytes);
-            operations.Insert(title, top ?1:0, tag);
+//            TODO 需要修改
+            operations.Insert(title, top ?1:0, tag, "开发");
             return new normalResponse(true, "");
         }
         return new normalResponse(false, "存储出错");

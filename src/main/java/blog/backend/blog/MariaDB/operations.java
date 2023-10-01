@@ -31,7 +31,7 @@ public class operations {
         return tmp;
     }
 
-    public static Boolean Insert(String title, int top, String tag) {
+    public static Boolean Insert(String title, int top, String tag, String cata) {
         Connection conn = null;
         Statement stmt = null;
         try {
@@ -40,9 +40,11 @@ public class operations {
             stmt = conn.createStatement();
             String sql;
             if(!tag.isEmpty()){
-                sql = "INSERT INTO blog (title, createDate, path, top, tag) VALUES ('"+title+"',CONVERT_TZ(CURRENT_TIMESTAMP(), 'UTC', '+8:00'), '"+title+".md', "+top+", '"+tag+"');";
+                sql = String.format("INSERT INTO blog (title, createDate, path, top, tag, cata) VALUES ('%s', CONVERT_TZ(CURRENT_TIMESTAMP(), 'UTC', '+8:00'), '%s', '%d', '%s', '%s')", title, title+".md", top, tag, cata);
+//                sql = "INSERT INTO blog (title, createDate, path, top, tag, cata) VALUES ('"+title+"',CONVERT_TZ(CURRENT_TIMESTAMP(), 'UTC', '+8:00'), '"+title+".md', "+top+", '"+tag+"', '"+cata+"');";
             }else{
-                sql = "INSERT INTO blog (title, createDate, path, top) VALUES ('"+title+"',CONVERT_TZ(CURRENT_TIMESTAMP(), 'UTC', '+8:00'), '"+title+".md', "+top+");";
+                sql = String.format("INSERT INTO blog (title, createDate, path, top, cata) VALUES ('%s', CONVERT_TZ(CURRENT_TIMESTAMP(), 'UTC', '+8:00'), '%s', '%d', '%s')", title, title+".md", top, cata);
+//                sql = "INSERT INTO blog (title, createDate, path, top, cata) VALUES ('"+title+"',CONVERT_TZ(CURRENT_TIMESTAMP(), 'UTC', '+8:00'), '"+title+".md', "+top+");";
             }
             stmt.executeUpdate(sql);
             return true;
