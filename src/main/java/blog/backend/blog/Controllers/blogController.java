@@ -36,12 +36,14 @@ class contentResponse{
     String tag;
     Timestamp date;
     String content;
+    String cata;
 
-    public contentResponse(String title, String tag, Timestamp date, String content) {
+    public contentResponse(String title, String tag, Timestamp date, String content, String cata) {
         this.title = title;
         this.tag = tag;
         this.date = date;
         this.content = content;
+        this.cata = cata;
     }
 }
 
@@ -217,7 +219,7 @@ public class blogController {
     @RequestMapping("/getContentByName")
     contentResponse getContentByName(@RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("fileName") String fileName) throws IOException {
         if(!loginController.checkToken(token, name)){
-            return new contentResponse("", "", null, "");
+            return new contentResponse("", "", null, "", "");
         }
         blogContent info=operations.getBlogByName(fileName);
         fileName=fileName+".md";
@@ -227,7 +229,7 @@ public class blogController {
 
         File file = new File(tmp.path);
         if (!file.exists()) {
-            return new contentResponse("", "", null, "");
+            return new contentResponse("", "", null, "", "");
         }
         StringBuilder contentBuilder = new StringBuilder();
         try (Scanner scanner = new Scanner(file, StandardCharsets.UTF_8)) {
@@ -235,7 +237,7 @@ public class blogController {
                 contentBuilder.append(scanner.nextLine()).append("\n");
             }
         }
-        return new contentResponse(info.title, info.tag, info.date, contentBuilder.toString());
+        return new contentResponse(info.title, info.tag, info.date, contentBuilder.toString(), info.cata);
     }
 
     @RequestMapping("/blog/content/{id}")
@@ -249,7 +251,7 @@ public class blogController {
 
         File file = new File(tmp.path);
         if (!file.exists()) {
-            return new contentResponse("", "", null, "");
+            return new contentResponse("", "", null, "", "");
         }
         StringBuilder contentBuilder = new StringBuilder();
         try (Scanner scanner = new Scanner(file, StandardCharsets.UTF_8)) {
@@ -257,7 +259,7 @@ public class blogController {
                 contentBuilder.append(scanner.nextLine()).append("\n");
             }
         }
-        return new contentResponse(info.title, info.tag, info.date, contentBuilder.toString());
+        return new contentResponse(info.title, info.tag, info.date, contentBuilder.toString(), info.cata);
     }
 
     @RequestMapping("/blog/getAll")

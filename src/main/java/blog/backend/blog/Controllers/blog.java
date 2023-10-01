@@ -12,13 +12,15 @@ public class blog {
     String path;
     Boolean top;
     String tag;
+    String cata;
 
-    public blog(int id, String title, Date date, String path, Boolean top, String tag) {
+    public blog(int id, String title, Date date, String path, Boolean top, String tag, String cata) {
         this.id = id;
         this.title = title;
         this.date = date;
         this.path = path;
         this.top = top;
         this.tag = tag;
+        this.cata = cata;
     }
 }

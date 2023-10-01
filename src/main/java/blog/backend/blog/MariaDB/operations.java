@@ -72,7 +72,7 @@ public class operations {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM blog ORDER BY createDate DESC;" );
             while (resultSet.next()) {
-                blog data=new blog(resultSet.getInt(1), resultSet.getString(2), resultSet.getTimestamp(3), resultSet.getString(4), resultSet.getBoolean(5), resultSet.getString(6));
+                blog data=new blog(resultSet.getInt(1), resultSet.getString(2), resultSet.getTimestamp(3), resultSet.getString(4), resultSet.getBoolean(5), resultSet.getString(6), resultSet.getString(7));
                 list.add(data);
             }
             resultSet.close();
@@ -138,6 +138,7 @@ public class operations {
         String title="";
         String tag=null;
         Timestamp date=null;
+        String cata=null;
         try {
             Class.forName(DRIVER);
             Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -147,18 +148,19 @@ public class operations {
                 title = resultSet.getString(1);
                 date=resultSet.getTimestamp(2);
                 tag = resultSet.getString(3);
+                cata = resultSet.getString(4);
                 if (title == null || title.equals("null")) {
-                    return new blogContent("", null, null);
+                    return new blogContent("", null, null, cata);
                 }
             }
             resultSet.close();
             statement.close();
             connection.close();
-            return new blogContent(title, tag, date);
+            return new blogContent(title, tag, date, cata);
         } catch (Exception e) {
             System.err.println("错误: " + e.getMessage());
         }
-        return new blogContent("", null, null);
+        return new blogContent("", null, null, null);
     }
 
     public static blogContent getBlogById(int id){
@@ -175,16 +177,16 @@ public class operations {
                 date=resultSet.getTimestamp(2);
                 tag = resultSet.getString(3);
                 if (title == null || title.equals("null")) {
-                    return new blogContent("", null, null);
+                    return new blogContent("", null, null, null);
                 }
             }
             resultSet.close();
             statement.close();
             connection.close();
-            return new blogContent(title, tag, date);
+            return new blogContent(title, tag, date, null);
         } catch (Exception e) {
             System.err.println("错误: " + e.getMessage());
         }
-        return new blogContent("", null, null);
+        return new blogContent("", null, null, null);
     }
 }
