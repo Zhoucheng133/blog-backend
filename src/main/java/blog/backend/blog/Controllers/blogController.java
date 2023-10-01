@@ -13,8 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 import static blog.backend.blog.MariaDB.operations.delBlog;
 import static blog.backend.blog.MariaDB.operations.getAllTitles;
@@ -84,6 +83,17 @@ class searchPath{
 @ResponseBody
 @CrossOrigin
 public class blogController {
+    @RequestMapping("/getAllCata")
+    ArrayList<String> getAllCata(){
+        ArrayList<String> list = operations.getAllCata();
+        ArrayList<String> newList = new ArrayList<>();
+        for (String cd : list) {
+            if (!newList.contains(cd)) {
+                newList.add(cd);
+            }
+        }
+        return newList;
+    }
     @RequestMapping("/delFile")
     normalResponse delFile(@RequestHeader("token") String token, @RequestHeader("name") String name, @RequestParam("fileName") String fileName, @RequestParam("path") String path){
         if(!loginController.checkToken(token, name)){

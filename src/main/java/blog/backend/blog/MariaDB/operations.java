@@ -2,6 +2,8 @@ package blog.backend.blog.MariaDB;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+
 import blog.backend.blog.Controllers.blog;
 import blog.backend.blog.Controllers.blogContent;
 
@@ -161,6 +163,26 @@ public class operations {
             System.err.println("错误: " + e.getMessage());
         }
         return new blogContent("", null, null, null);
+    }
+
+    public static ArrayList<String> getAllCata(){
+        ArrayList<String> list=new ArrayList<>();
+        try {
+            Class.forName(DRIVER);
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT cata FROM blog");
+            while (resultSet.next()) {
+                list.add(resultSet.getString("cata"));
+            }
+            resultSet.close();
+            statement.close();
+            connection.close();
+            return list;
+        } catch (Exception e) {
+            System.err.println("错误: " + e.getMessage());
+        }
+        return list;
     }
 
     public static blogContent getBlogById(int id){
