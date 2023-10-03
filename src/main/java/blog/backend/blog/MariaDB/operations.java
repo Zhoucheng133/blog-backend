@@ -165,6 +165,26 @@ public class operations {
         return new blogContent("", null, null, null);
     }
 
+    public static ArrayList<String> getAllTag(){
+        ArrayList<String> list=new ArrayList<>();
+        try {
+            Class.forName(DRIVER);
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT tag FROM blog");
+            while (resultSet.next()) {
+                list.add(resultSet.getString("tag"));
+            }
+            resultSet.close();
+            statement.close();
+            connection.close();
+            return list;
+        } catch (Exception e) {
+            System.err.println("错误: " + e.getMessage());
+        }
+        return list;
+    }
+
     public static ArrayList<String> getAllCata(){
         ArrayList<String> list=new ArrayList<>();
         try {

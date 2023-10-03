@@ -83,6 +83,17 @@ class searchPath{
 @ResponseBody
 @CrossOrigin
 public class blogController {
+    @RequestMapping("/getAllTag")
+    ArrayList<String> getAAllTag(){
+        ArrayList<String> list = operations.getAllTag();
+        ArrayList<String> newList = new ArrayList<>();
+        for (String cd : list) {
+            if (!newList.contains(cd)) {
+                newList.add(cd);
+            }
+        }
+        return newList;
+    }
     @RequestMapping("/getAllCata")
     ArrayList<String> getAllCata(){
         ArrayList<String> list = operations.getAllCata();
