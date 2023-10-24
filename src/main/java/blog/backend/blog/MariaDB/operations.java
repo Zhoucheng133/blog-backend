@@ -209,17 +209,15 @@ public class operations {
         String title="";
         String tag=null;
         Timestamp date=null;
-        String cata="";
         try {
             Class.forName(DRIVER);
             Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT title, createDate, tag, cata FROM blog WHERE id = " + id);
+            ResultSet resultSet = statement.executeQuery("SELECT title, createDate, tag FROM blog WHERE id = " + id);
             if (resultSet.next()) {
                 title = resultSet.getString(1);
                 date=resultSet.getTimestamp(2);
                 tag = resultSet.getString(3);
-                cata = resultSet.getString(4);
                 if (title == null || title.equals("null")) {
                     return new blogContent("", null, null, null);
                 }
@@ -227,7 +225,7 @@ public class operations {
             resultSet.close();
             statement.close();
             connection.close();
-            return new blogContent(title, tag, date, cata);
+            return new blogContent(title, tag, date, null);
         } catch (Exception e) {
             System.err.println("错误: " + e.getMessage());
         }
